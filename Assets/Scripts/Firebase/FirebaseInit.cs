@@ -1,15 +1,17 @@
-using Firebase;
 using Firebase.Analytics;
 using UnityEngine;
 
-public class FirebaseInit : MonoBehaviour
+namespace Firebase
 {
-    // Start is called before the first frame update
-    void Start()
+    public class FirebaseInit : MonoBehaviour
     {
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
+        // Start is called before the first frame update
+        void Start()
         {
-            FirebaseAnalytics.SetAnalyticsCollectionEnabled(true);
-        });
+            FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
+            {
+                FirebaseAnalytics.SetAnalyticsCollectionEnabled(true);
+            });
+        }
     }
 }
