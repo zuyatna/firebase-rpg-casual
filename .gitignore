@@ -61,3 +61,10 @@ crashlytics-build.properties
 # file: ~/.gitignore_global
 .DS_Store
 .idea
+
+# Firebase file was so biiigggg!
+[Aa]ssets/Editor Default Resources*
+[Aa]ssets/ExternalDependencyManager*
+[Aa]ssets/Firebase*
+[Aa]ssets/plugins*
+[Aa]ssets/Parse*
