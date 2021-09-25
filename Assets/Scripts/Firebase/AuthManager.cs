@@ -1,5 +1,6 @@
 using System.Collections;
 using Firebase.Auth;
+using Firebase.Database;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,7 @@ namespace Firebase
     {
         [Header("Firebase")] 
         private DependencyStatus m_DependencyStatus;
+        private DatabaseReference m_DatabaseReference;
         private FirebaseAuth m_Auth;
         private FirebaseUser m_User;
 
@@ -46,6 +48,7 @@ namespace Firebase
             Debug.Log("Setting up Firebase Auth");
             
             m_Auth = FirebaseAuth.DefaultInstance;
+            m_DatabaseReference = FirebaseDatabase.DefaultInstance.RootReference;
         }
 
         private IEnumerator Login(string email, string password)
@@ -88,8 +91,11 @@ namespace Firebase
             }
             else
             {
+                PlayerPrefs.SetString("email", email);
+                PlayerPrefs.SetString("password", password);
+                
                 m_User = loginTask.Result;
-                    
+                
                 Debug.LogWarning($"User login successfully: {m_User.DisplayName}, {m_User.Email}");
             }
         }
@@ -163,13 +169,49 @@ namespace Firebase
                             
                             // clear message
                             Debug.LogWarning($"User register successfully: {m_User.DisplayName}, {m_User.Email}");
+
                             messageText.text = "";
+
+                            StartCoroutine(UpdateUsernameDatabase(username));
+                            StartCoroutine(UpdateLevel(1));
                         }
                     }
                 }
             }
         }
 
+        private IEnumerator UpdateUsernameDatabase(string username)
+        {
+            var dbTask = m_DatabaseReference.Child("users").Child(m_User.UserId).Child("username").SetValueAsync(username);
+
+            yield return new WaitUntil(() => dbTask.IsCompleted);
+
+            if (dbTask.Exception != null)
+            {
+                Debug.LogWarning($"Failed to add username task with: {dbTask.Exception}");
+            }
+            else
+            {
+                Debug.Log("Success to add username user");
+            }
+        }
+
+        private IEnumerator UpdateLevel(int level)
+        {
+            var dbTask = m_DatabaseReference.Child("users").Child(m_User.UserId).Child("level").SetValueAsync(level);
+
+            yield return new WaitUntil(() => dbTask.IsCompleted);
+
+            if (dbTask.Exception != null)
+            {
+                Debug.LogWarning($"Failed to add level task with: {dbTask.Exception}");
+            }
+            else
+            {
+                Debug.Log("Success to add level user");
+            }
+        }
+        
         public void Login()
         {
             StartCoroutine(Login(emailLoginField.text, passwordLoginField.text));
@@ -178,6 +220,13 @@ namespace Firebase
         public void Register()
         {
             StartCoroutine(Register(emailRegisterField.text, passwordVerifyRegisterField.text, usernameRegisterField.text));
+        }
+
+        public void Logout()
+        {
+            m_Auth.SignOut();
+            
+            Debug.LogWarning("User signed out");
         }
     }
 }
