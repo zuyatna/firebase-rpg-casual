@@ -66,5 +66,6 @@ crashlytics-build.properties
 [Aa]ssets/Editor Default Resources*
 [Aa]ssets/ExternalDependencyManager*
 [Aa]ssets/Firebase*
-[Aa]ssets/plugins*
 [Aa]ssets/Parse*
+[Aa]ssets/plugins*
+[Aa]ssets/StreamingAssets*
