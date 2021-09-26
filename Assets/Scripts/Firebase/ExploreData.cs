@@ -11,11 +11,6 @@ namespace Firebase
         private DependencyStatus m_DependencyStatus;
         private DatabaseReference m_DatabaseReference;
 
-        private int m_Level;
-        private int m_Xp;
-        private int m_Diamond;
-        private int m_Gold;
-        
         private void Awake()
         {
             FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
@@ -47,19 +42,19 @@ namespace Firebase
             }
             else if (dbTask.Result.Value == null)
             {
-                m_Level = 0;
-                m_Xp = 0;
-                m_Diamond = 0;
-                m_Gold = 0;
+                UserInfo.Instance.level = 0;
+                UserInfo.Instance.xp = 0;
+                UserInfo.Instance.diamond = 0;
+                UserInfo.Instance.gold = 0;
             }
             else
             {
                 DataSnapshot snapshot = dbTask.Result;
 
-                m_Level = (int)snapshot.Child("level").Value;
-                m_Xp = (int)snapshot.Child("xp").Value;
-                m_Diamond = (int)snapshot.Child("diamond").Value;
-                m_Gold = (int)snapshot.Child("gold").Value;
+                UserInfo.Instance.level = (int)snapshot.Child("level").Value;
+                UserInfo.Instance.xp = (int)snapshot.Child("xp").Value;
+                UserInfo.Instance.diamond = (int)snapshot.Child("diamond").Value;
+                UserInfo.Instance.gold = (int)snapshot.Child("gold").Value;
             }
         }
         
@@ -129,21 +124,26 @@ namespace Firebase
         
         public void SaveExplore()
         {
-            m_Xp += 10;
-            m_Diamond += 1;
-            m_Gold += 150;
+            UserInfo.Instance.diamond += 1;
+            UserInfo.Instance.gold += 150;
 
-            if (m_Xp > m_Level * 100)
+            if (UserInfo.Instance.xp > 100)
             {
-                m_Level += 1;
-                m_Xp = 0;
+                UserInfo.Instance.level += 1;
+                UserInfo.Instance.xp = 0;
                 
-                StartCoroutine(UpdateLevel(m_Level));
+                StartCoroutine(UpdateLevel(UserInfo.Instance.level));
+            }
+            else
+            {
+                UserInfo.Instance.xp += 10;
             }
 
-            StartCoroutine(UpdateXp(m_Xp));
-            StartCoroutine(UpdateDiamond(m_Diamond));
-            StartCoroutine(UpdateGold(m_Gold));
+            StartCoroutine(UpdateXp(UserInfo.Instance.xp));
+            StartCoroutine(UpdateDiamond(UserInfo.Instance.diamond));
+            StartCoroutine(UpdateGold(UserInfo.Instance.gold));
+            
+            SceneManagement.ChangeScene("Home");
         }
     }
 }

@@ -1,6 +1,5 @@
 using Firebase.Auth;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Singleton
 {
@@ -57,6 +56,6 @@ namespace Singleton
             }
         }
 
-        public int LevelUp() => (xp * 2) * 10;
+        public int GetLevelUp() => (level + 2) * 10;
     }
 }

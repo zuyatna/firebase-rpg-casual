@@ -57,12 +57,17 @@ namespace Firebase
             {
                 levelText.text = "Level: 0";
                 xpText.text = "Xp: 0";
-                diamondText.text = "diamond: 0";
-                goldText.text = "gold: 0";
+                diamondText.text = "Diamond: 0";
+                goldText.text = "Gold: 0";
             }
             else
             {
                 DataSnapshot snapshot = dbTask.Result;
+
+                UserInfo.Instance.level = int.Parse(snapshot.Child("level").Value.ToString());
+                UserInfo.Instance.xp = int.Parse(snapshot.Child("xp").Value.ToString());
+                UserInfo.Instance.diamond = int.Parse(snapshot.Child("diamond").Value.ToString());
+                UserInfo.Instance.gold = int.Parse(snapshot.Child("gold").Value.ToString());
 
                 levelText.text = $"Level: {snapshot.Child("level").Value}";
                 xpText.text = $"Xp: {snapshot.Child("xp").Value}";

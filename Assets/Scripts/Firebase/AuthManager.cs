@@ -56,6 +56,8 @@ namespace Firebase
         {
             var loginTask = m_Auth.SignInWithEmailAndPasswordAsync(email, password);
 
+            messageText.text = "Loading...";
+            
             yield return new WaitUntil(() => loginTask.IsCompleted);
 
             if (loginTask.Exception != null)
@@ -101,7 +103,7 @@ namespace Firebase
                 UserInfo.Instance.Auth = m_Auth;
 
                 SceneManagement.ChangeScene("Home");
-                
+
                 Debug.LogWarning($"User login successfully: {m_User.DisplayName}, {m_User.Email}");
             }
         }
@@ -161,6 +163,8 @@ namespace Firebase
 
                         var profileTask = m_User.UpdateUserProfileAsync(profile);
 
+                        messageText.text = "Loading...";
+                        
                         yield return new WaitUntil(() => profileTask.IsCompleted);
 
                         if (profileTask.Exception != null)
@@ -173,13 +177,101 @@ namespace Firebase
                         {
                             // Todo: set and save username
                             
+                            UserInfo.Instance.User = m_User;
+
+                            StartCoroutine(UpdateUsernameDatabase(username));
+                            StartCoroutine(UpdateLevel(0));
+                            StartCoroutine(UpdateXp(0));
+                            StartCoroutine(UpdateDiamond(0));
+                            StartCoroutine(UpdateGold(0));
+                            
                             // clear message
                             Debug.LogWarning($"User register successfully: {m_User.DisplayName}, {m_User.Email}");
 
-                            messageText.text = "";
+                            messageText.text = $"User register successfully: {m_User.DisplayName}, {m_User.Email}";
                         }
                     }
                 }
+            }
+        }
+
+        private IEnumerator UpdateUsernameDatabase(string username)
+        {
+            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).Child("username").SetValueAsync(username);
+
+            yield return new WaitUntil(() => dbTask.IsCompleted);
+
+            if (dbTask.Exception != null)
+            {
+                Debug.LogWarning($"Failed to add username task with: {dbTask.Exception}");
+            }
+            else
+            {
+                Debug.Log("Success to add username user");
+            }
+        }
+        
+        private IEnumerator UpdateLevel(int level)
+        {
+            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).Child("level").SetValueAsync(level);
+
+            yield return new WaitUntil(() => dbTask.IsCompleted);
+
+            if (dbTask.Exception != null)
+            {
+                Debug.LogWarning($"Failed to add level task with: {dbTask.Exception}");
+            }
+            else
+            {
+                Debug.Log("Success to add level user");
+            }
+        }
+
+        private IEnumerator UpdateXp(int xp)
+        {
+            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).Child("xp").SetValueAsync(xp);
+
+            yield return new WaitUntil(() => dbTask.IsCompleted);
+
+            if (dbTask.Exception != null)
+            {
+                Debug.LogWarning($"Failed to add xp task with: {dbTask.Exception}");
+            }
+            else
+            {
+                Debug.Log("Success to add xp user");
+            }
+        }
+        
+        private IEnumerator UpdateDiamond(int diamond)
+        {
+            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).Child("diamond").SetValueAsync(diamond);
+
+            yield return new WaitUntil(() => dbTask.IsCompleted);
+
+            if (dbTask.Exception != null)
+            {
+                Debug.LogWarning($"Failed to add diamond task with: {dbTask.Exception}");
+            }
+            else
+            {
+                Debug.Log("Success to add diamond user");
+            }
+        }
+        
+        private IEnumerator UpdateGold(int gold)
+        {
+            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).Child("gold").SetValueAsync(gold);
+
+            yield return new WaitUntil(() => dbTask.IsCompleted);
+
+            if (dbTask.Exception != null)
+            {
+                Debug.LogWarning($"Failed to add gold task with: {dbTask.Exception}");
+            }
+            else
+            {
+                Debug.Log("Success to add gold user");
             }
         }
 
