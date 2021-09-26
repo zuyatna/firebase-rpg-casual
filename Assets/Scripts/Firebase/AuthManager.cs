@@ -100,6 +100,8 @@ namespace Firebase
                 UserInfo.Instance.User = m_User;
                 UserInfo.Instance.Auth = m_Auth;
 
+                SceneManagement.ChangeScene("Home");
+                
                 Debug.LogWarning($"User login successfully: {m_User.DisplayName}, {m_User.Email}");
             }
         }
@@ -175,47 +177,12 @@ namespace Firebase
                             Debug.LogWarning($"User register successfully: {m_User.DisplayName}, {m_User.Email}");
 
                             messageText.text = "";
-
-                            StartCoroutine(UpdateUsernameDatabase(username));
-                            StartCoroutine(UpdateLevel(1));
                         }
                     }
                 }
             }
         }
 
-        private IEnumerator UpdateUsernameDatabase(string username)
-        {
-            var dbTask = m_DatabaseReference.Child("users").Child(m_User.UserId).Child("username").SetValueAsync(username);
-
-            yield return new WaitUntil(() => dbTask.IsCompleted);
-
-            if (dbTask.Exception != null)
-            {
-                Debug.LogWarning($"Failed to add username task with: {dbTask.Exception}");
-            }
-            else
-            {
-                Debug.Log("Success to add username user");
-            }
-        }
-
-        private IEnumerator UpdateLevel(int level)
-        {
-            var dbTask = m_DatabaseReference.Child("users").Child(m_User.UserId).Child("level").SetValueAsync(level);
-
-            yield return new WaitUntil(() => dbTask.IsCompleted);
-
-            if (dbTask.Exception != null)
-            {
-                Debug.LogWarning($"Failed to add level task with: {dbTask.Exception}");
-            }
-            else
-            {
-                Debug.Log("Success to add level user");
-            }
-        }
-        
         public void Login()
         {
             StartCoroutine(Login(emailLoginField.text, passwordLoginField.text));

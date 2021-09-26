@@ -1,5 +1,6 @@
 using Firebase.Auth;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Singleton
 {
@@ -32,9 +33,15 @@ namespace Singleton
             }
         }
         
+        [Header("Firebase")]
         public FirebaseUser User;
-
         public FirebaseAuth Auth;
+
+        [Header("Player Data")]
+        public int level;
+        public int xp;
+        public int diamond;
+        public int gold;
 
         private void Awake()
         {
@@ -49,5 +56,7 @@ namespace Singleton
                 Destroy(gameObject);
             }
         }
+
+        public int LevelUp() => (xp * 2) * 10;
     }
 }
