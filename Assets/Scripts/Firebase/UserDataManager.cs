@@ -1,6 +1,7 @@
 using System.Collections;
 using Firebase.Auth;
 using Firebase.Database;
+using Singleton;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,8 +12,6 @@ namespace Firebase
         [Header("Firebase")] 
         private DependencyStatus m_DependencyStatus;
         private DatabaseReference m_DatabaseReference;
-        private FirebaseUser m_User;
-        private FirebaseAuth m_Auth;
 
         [Header("User Data")] 
         public Text usernameText;
@@ -34,10 +33,6 @@ namespace Firebase
 
                 if (m_DependencyStatus == DependencyStatus.Available)
                 {
-                    m_Auth = FirebaseAuth.DefaultInstance;
-
-                    m_User = m_Auth.SignInWithEmailAndPasswordAsync(PlayerPrefs.GetString("email"), PlayerPrefs.GetString("password")).Result;
-                    
                     m_DatabaseReference = FirebaseDatabase.DefaultInstance.RootReference;
 
                     StartCoroutine(LoadUserData());
@@ -51,7 +46,7 @@ namespace Firebase
 
         private IEnumerator LoadUserData()
         {
-            var dbTask = m_DatabaseReference.Child("users").Child(m_User.UserId).GetValueAsync();
+            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).GetValueAsync();
 
             yield return new WaitUntil(() => dbTask.IsCompleted);
 
@@ -88,18 +83,18 @@ namespace Firebase
         {
             UserProfile profile = new UserProfile { DisplayName = username };
 
-            var profileTask = m_User.UpdateUserProfileAsync(profile);
+            var profileTask = UserInfo.Instance.User.UpdateUserProfileAsync(profile);
 
             yield return new WaitUntil(() => profileTask.IsCompleted);
 
             Debug.LogWarning(profileTask.Exception != null
                 ? $"Failed to update profile task with: {profileTask.Exception}"
-                : $"User register successfully: {m_User.DisplayName}, {m_User.Email}");
+                : $"User register successfully: {UserInfo.Instance.User.DisplayName}, {UserInfo.Instance.User.Email}");
         }
         
         private IEnumerator UpdateUsernameDatabase(string username)
         {
-            var dbTask = m_DatabaseReference.Child("users").Child(m_User.UserId).Child("username").SetValueAsync(username);
+            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).Child("username").SetValueAsync(username);
 
             yield return new WaitUntil(() => dbTask.IsCompleted);
 
@@ -115,7 +110,7 @@ namespace Firebase
         
         private IEnumerator UpdateLevel(int level)
         {
-            var dbTask = m_DatabaseReference.Child("users").Child(m_User.UserId).Child("level").SetValueAsync(level);
+            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).Child("level").SetValueAsync(level);
 
             yield return new WaitUntil(() => dbTask.IsCompleted);
 
@@ -131,7 +126,7 @@ namespace Firebase
         
         private IEnumerator UpdateXp(int xp)
         {
-            var dbTask = m_DatabaseReference.Child("users").Child(m_User.UserId).Child("xp").SetValueAsync(xp);
+            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).Child("xp").SetValueAsync(xp);
 
             yield return new WaitUntil(() => dbTask.IsCompleted);
 
@@ -147,7 +142,7 @@ namespace Firebase
         
         private IEnumerator UpdateDiamond(int diamond)
         {
-            var dbTask = m_DatabaseReference.Child("users").Child(m_User.UserId).Child("diamond").SetValueAsync(diamond);
+            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).Child("diamond").SetValueAsync(diamond);
 
             yield return new WaitUntil(() => dbTask.IsCompleted);
 
@@ -163,7 +158,7 @@ namespace Firebase
         
         private IEnumerator UpdateGold(int gold)
         {
-            var dbTask = m_DatabaseReference.Child("users").Child(m_User.UserId).Child("gold").SetValueAsync(gold);
+            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).Child("gold").SetValueAsync(gold);
 
             yield return new WaitUntil(() => dbTask.IsCompleted);
 
@@ -179,7 +174,7 @@ namespace Firebase
 
         public void Logout()
         {
-            m_Auth.SignOut();
+            UserInfo.Instance.Auth.SignOut();
         }
 
         public void SaveExplore()
@@ -188,7 +183,7 @@ namespace Firebase
             m_Diamond += 1;
             m_Gold += 150;
 
-            if (m_Xp > 100)
+            if (m_Xp > m_Level * 100)
             {
                 m_Level += 1;
                 m_Xp = 0;

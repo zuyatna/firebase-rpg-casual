@@ -1,6 +1,7 @@
 using System.Collections;
 using Firebase.Auth;
 using Firebase.Database;
+using Singleton;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -95,7 +96,10 @@ namespace Firebase
                 PlayerPrefs.SetString("password", password);
                 
                 m_User = loginTask.Result;
-                
+
+                UserInfo.Instance.User = m_User;
+                UserInfo.Instance.Auth = m_Auth;
+
                 Debug.LogWarning($"User login successfully: {m_User.DisplayName}, {m_User.Email}");
             }
         }
@@ -226,7 +230,7 @@ namespace Firebase
         {
             m_Auth.SignOut();
             
-            Debug.LogWarning("User signed out");
+            Debug.LogWarning($"User {m_User.DisplayName} was sign out");
         }
     }
 }
