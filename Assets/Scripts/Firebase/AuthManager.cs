@@ -104,8 +104,6 @@ namespace Firebase
 
                 UserInfo.Instance.User = m_User;
 
-                SceneManagement.ChangeScene("home");
-
                 Debug.LogWarning($"User login successfully: {m_User.DisplayName}, {m_User.Email}");
             }
         }
@@ -195,9 +193,22 @@ namespace Firebase
             }
         }
 
-        public void Login()
+        private IEnumerator FetchDataUser()
         {
             StartCoroutine(Login(emailLoginField.text, passwordLoginField.text));
+            
+            yield return new WaitForSeconds(2);
+            
+            StartCoroutine(UserInfo.Instance.LoadUserData());
+
+            yield return new WaitForSeconds(2);
+            
+            SceneManagement.ChangeScene("home");
+        }
+        
+        public void Login()
+        {
+            StartCoroutine(FetchDataUser());
         }
 
         public void Register()
