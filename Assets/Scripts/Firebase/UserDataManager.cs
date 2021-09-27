@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using Singleton;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,12 +16,14 @@ namespace Firebase
 
         private void Awake()
         {
-            StartCoroutine(UserInfo.Instance.LoadUserData());
+            StartCoroutine(FetchDataUser());
         }
 
-        private void Update()
+        private IEnumerator FetchDataUser()
         {
-            // Todo: performance issue!
+            StartCoroutine(UserInfo.Instance.LoadUserData());
+
+            yield return new WaitForSeconds(2);
             
             usernameText.text = UserInfo.Instance.username;
             levelText.text = "Level: " +UserInfo.Instance.level;
@@ -29,7 +31,7 @@ namespace Firebase
             diamondText.text = "Diamond: " +UserInfo.Instance.diamond;
             goldText.text = "Gold: " +UserInfo.Instance.gold;
         }
-
+        
         public void Logout()
         {
             UserInfo.Instance.Logout();
