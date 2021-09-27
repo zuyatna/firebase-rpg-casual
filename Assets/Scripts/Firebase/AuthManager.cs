@@ -50,6 +50,9 @@ namespace Firebase
             
             m_Auth = FirebaseAuth.DefaultInstance;
             m_DatabaseReference = FirebaseDatabase.DefaultInstance.RootReference;
+            
+            UserInfo.Instance.Auth = m_Auth;
+            UserInfo.Instance.Reference = m_DatabaseReference;
         }
 
         private IEnumerator Login(string email, string password)
@@ -100,8 +103,6 @@ namespace Firebase
                 m_User = loginTask.Result;
 
                 UserInfo.Instance.User = m_User;
-                UserInfo.Instance.Auth = m_Auth;
-                UserInfo.Instance.Reference = m_DatabaseReference;
 
                 SceneManagement.ChangeScene("home");
 

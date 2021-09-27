@@ -21,6 +21,8 @@ namespace Firebase
 
         private void Update()
         {
+            // Todo: performance issue!
+            
             usernameText.text = UserInfo.Instance.username;
             levelText.text = "Level: " +UserInfo.Instance.level;
             xpText.text = "Xp: " +UserInfo.Instance.xp;

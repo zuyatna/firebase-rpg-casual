@@ -94,6 +94,8 @@ namespace Singleton
             }
             else
             {
+                username = usernameUser;
+                
                 Debug.Log("Success to add username user");
             }
         }
