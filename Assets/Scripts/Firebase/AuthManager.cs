@@ -101,8 +101,9 @@ namespace Firebase
 
                 UserInfo.Instance.User = m_User;
                 UserInfo.Instance.Auth = m_Auth;
+                UserInfo.Instance.Reference = m_DatabaseReference;
 
-                SceneManagement.ChangeScene("Home");
+                SceneManagement.ChangeScene("home");
 
                 Debug.LogWarning($"User login successfully: {m_User.DisplayName}, {m_User.Email}");
             }
@@ -177,11 +178,11 @@ namespace Firebase
                         {
                             UserInfo.Instance.User = m_User;
 
-                            StartCoroutine(UpdateUsernameDatabase(username));
-                            StartCoroutine(UpdateLevel(0));
-                            StartCoroutine(UpdateXp(0));
-                            StartCoroutine(UpdateDiamond(0));
-                            StartCoroutine(UpdateGold(0));
+                            StartCoroutine(UserInfo.Instance.UpdateUsernameDatabase(username));
+                            StartCoroutine(UserInfo.Instance.UpdateLevel(0));
+                            StartCoroutine(UserInfo.Instance.UpdateXp(0));
+                            StartCoroutine(UserInfo.Instance.UpdateDiamond(0));
+                            StartCoroutine(UserInfo.Instance.UpdateGold(0));
                             
                             // clear message
                             Debug.LogWarning($"User register successfully: {m_User.DisplayName}, {m_User.Email}");
@@ -193,86 +194,6 @@ namespace Firebase
             }
         }
 
-        private IEnumerator UpdateUsernameDatabase(string username)
-        {
-            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).Child("username").SetValueAsync(username);
-
-            yield return new WaitUntil(() => dbTask.IsCompleted);
-
-            if (dbTask.Exception != null)
-            {
-                Debug.LogWarning($"Failed to add username task with: {dbTask.Exception}");
-            }
-            else
-            {
-                Debug.Log("Success to add username user");
-            }
-        }
-        
-        private IEnumerator UpdateLevel(int level)
-        {
-            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).Child("level").SetValueAsync(level);
-
-            yield return new WaitUntil(() => dbTask.IsCompleted);
-
-            if (dbTask.Exception != null)
-            {
-                Debug.LogWarning($"Failed to add level task with: {dbTask.Exception}");
-            }
-            else
-            {
-                Debug.Log("Success to add level user");
-            }
-        }
-
-        private IEnumerator UpdateXp(int xp)
-        {
-            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).Child("xp").SetValueAsync(xp);
-
-            yield return new WaitUntil(() => dbTask.IsCompleted);
-
-            if (dbTask.Exception != null)
-            {
-                Debug.LogWarning($"Failed to add xp task with: {dbTask.Exception}");
-            }
-            else
-            {
-                Debug.Log("Success to add xp user");
-            }
-        }
-        
-        private IEnumerator UpdateDiamond(int diamond)
-        {
-            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).Child("diamond").SetValueAsync(diamond);
-
-            yield return new WaitUntil(() => dbTask.IsCompleted);
-
-            if (dbTask.Exception != null)
-            {
-                Debug.LogWarning($"Failed to add diamond task with: {dbTask.Exception}");
-            }
-            else
-            {
-                Debug.Log("Success to add diamond user");
-            }
-        }
-        
-        private IEnumerator UpdateGold(int gold)
-        {
-            var dbTask = m_DatabaseReference.Child("users").Child(UserInfo.Instance.User.UserId).Child("gold").SetValueAsync(gold);
-
-            yield return new WaitUntil(() => dbTask.IsCompleted);
-
-            if (dbTask.Exception != null)
-            {
-                Debug.LogWarning($"Failed to add gold task with: {dbTask.Exception}");
-            }
-            else
-            {
-                Debug.Log("Success to add gold user");
-            }
-        }
-
         public void Login()
         {
             StartCoroutine(Login(emailLoginField.text, passwordLoginField.text));
@@ -281,13 +202,6 @@ namespace Firebase
         public void Register()
         {
             StartCoroutine(Register(emailRegisterField.text, passwordVerifyRegisterField.text, usernameRegisterField.text));
-        }
-
-        public void Logout()
-        {
-            m_Auth.SignOut();
-            
-            Debug.LogWarning($"User {m_User.DisplayName} was sign out");
         }
     }
 }
