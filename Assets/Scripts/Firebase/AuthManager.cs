@@ -175,8 +175,6 @@ namespace Firebase
                         }
                         else
                         {
-                            // Todo: set and save username
-                            
                             UserInfo.Instance.User = m_User;
 
                             StartCoroutine(UpdateUsernameDatabase(username));

@@ -57,5 +57,7 @@ namespace Singleton
         }
 
         public int GetLevelUp() => (level + 2) * 10;
+        
+        // Todo: make it clean.
     }
 }
