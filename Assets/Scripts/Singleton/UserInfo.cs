@@ -220,7 +220,7 @@ namespace Singleton
             Auth.SignOut();
 
             ClearData();
-            
+
             Debug.LogWarning($"User {User.DisplayName} was sign out");
         }
     }

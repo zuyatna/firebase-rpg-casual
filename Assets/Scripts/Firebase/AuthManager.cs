@@ -26,6 +26,8 @@ namespace Firebase
         public InputField passwordVerifyRegisterField;
 
         [Header("Message")] public Text messageText;
+
+        public GameObject splashPanel;
         
         private void Awake()
         {
@@ -50,9 +52,6 @@ namespace Firebase
             
             m_Auth = FirebaseAuth.DefaultInstance;
             m_DatabaseReference = FirebaseDatabase.DefaultInstance.RootReference;
-            
-            UserInfo.Instance.Auth = m_Auth;
-            UserInfo.Instance.Reference = m_DatabaseReference;
         }
 
         private IEnumerator Login(string email, string password)
@@ -97,11 +96,10 @@ namespace Firebase
             }
             else
             {
-                PlayerPrefs.SetString("email", email);
-                PlayerPrefs.SetString("password", password);
-                
                 m_User = loginTask.Result;
-
+                
+                UserInfo.Instance.Auth = m_Auth;
+                UserInfo.Instance.Reference = m_DatabaseReference;
                 UserInfo.Instance.User = m_User;
 
                 Debug.LogWarning($"User login successfully: {m_User.DisplayName}, {m_User.Email}");
@@ -182,7 +180,7 @@ namespace Firebase
                             StartCoroutine(UserInfo.Instance.UpdateXp(0));
                             StartCoroutine(UserInfo.Instance.UpdateDiamond(0));
                             StartCoroutine(UserInfo.Instance.UpdateGold(0));
-                            
+
                             // clear message
                             Debug.LogWarning($"User register successfully: {m_User.DisplayName}, {m_User.Email}");
 
@@ -205,7 +203,7 @@ namespace Firebase
             
             SceneManagement.ChangeScene("home");
         }
-        
+
         public void Login()
         {
             StartCoroutine(FetchDataUser());
